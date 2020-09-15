@@ -1,0 +1,10 @@
+Frontend
+- Tạo file vue trong folder components
+- import component trong router(index.js)
+- thêm modules trong store/modules
+- import modules trong store/index.js
+- thêm trong sidebar
+
+Backend
+- thêm route trong api.php
+- thêm controller
