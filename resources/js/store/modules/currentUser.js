@@ -10,7 +10,6 @@ const actions = {
     getUser( {commit} ) {
         axios.get('api/v1/user/current')
         .then( response => {
-            console.log(response.data)
             commit('setUser', response.data.user);
             commit('setPermission', response.data.user_permission);
         })

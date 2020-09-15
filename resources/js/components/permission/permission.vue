@@ -45,7 +45,7 @@
                     <v-spacer></v-spacer>
                     <v-dialog v-model="dialog" max-width="600px">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn  color="primary" dark class="mb-2" v-bind="attrs" v-on="on">New Item</v-btn>
+                        <v-btn  color="primary" dark class="mb-2" v-bind="attrs" v-on="on" v-if="isAdd">New Item</v-btn>
                       </template>
                       <v-card>
                         <v-card-title>
@@ -73,8 +73,8 @@
                 </template>
 
                 <template v-slot:[`item.actions`]="{ item }">
-                  <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-                  <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+                  <v-icon small class="mr-2" @click="editItem(item)" v-if="isEdit">mdi-pencil</v-icon>
+                  <v-icon small @click="deleteItem(item)" v-if="isDelete">mdi-delete</v-icon>
                 </template>
               </v-data-table>
             </v-card>
@@ -143,18 +143,32 @@ export default {
         name: '',
       },
       error: [],
-      isAdd: false,
-      isEdit: false,
-      isDelete: false,
     };
   },
 
   computed: {
-    userPermissions: {
-      get() {
-        return this.$store.state.currentUser.user.user_permission;
+    isAdd() {
+      let userPermissions = this.$store.state.currentUser.permissions;
+      for ( var i = 0; i< userPermissions.length; i++) {
+          if( userPermissions[i].name === "Thêm phân quyền") return true
       }
+      return false
     },
+    isEdit() {
+      let userPermissions = this.$store.state.currentUser.permissions;
+      for ( var i = 0; i< userPermissions.length; i++) {
+          if( userPermissions[i].name === "Sửa phân quyền") return true
+      }
+      return false
+    },
+    isDelete() {
+      let userPermissions = this.$store.state.currentUser.permissions;
+      for ( var i = 0; i< userPermissions.length; i++) {
+          if( userPermissions[i].name === "Xoá phân quyền") return true
+      }
+      return false
+    },
+
     formTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
     },
@@ -169,18 +183,8 @@ export default {
       val || this.close()
     },
   },
-  beforeMount() {
-    for ( let i = 0; i < this.userPermissions.length; i++) {
-      if ( this.userPermissions[i].name === "add permissions") {
-        this.isAdd = true;
-      }
-    }
-  },
   created () {
     this.$store.dispatch("permission/getPermissions");
-  },
-  beforeCreate() {
-    this.userPermissions;
   },
   methods: {
     editItem (item) {

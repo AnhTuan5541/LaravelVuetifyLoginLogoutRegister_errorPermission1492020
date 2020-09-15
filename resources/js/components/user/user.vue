@@ -307,6 +307,7 @@ export default {
     this.$store.dispatch("user/getUsers");
     this.$store.dispatch("role/getRoles");
     this.$store.dispatch("permission/getPermissions");
+    
   },
   beforeCreate() {
     this.userPermissions;
@@ -325,7 +326,6 @@ export default {
       this.selectedPermission = []
       axios.get('api/v1/user/permission/' + item.id)
       .then(response => {
-        console.log(response.data)
         this.selectedRole = response.data.roles
         this.selectedPermission = response.data.permissions
       })

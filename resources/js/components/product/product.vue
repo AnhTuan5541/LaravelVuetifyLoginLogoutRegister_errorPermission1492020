@@ -45,12 +45,7 @@
                     <v-spacer></v-spacer>
                     <v-dialog v-model="dialog" max-width="600px">
                       <template v-slot:activator="{ on, attrs }">
-
-                        <div>
-
-                        <!-- <v-btn v-if="permission.name ==='Thêm sản phẩm' " color="primary" dark class="mb-2" v-bind="attrs" v-on="on">New Item {{ userPermissions[1].name }}</v-btn> -->
-                        <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">New Item</v-btn>
-                        </div>
+                        <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on" v-if="isAdd">New Item</v-btn>
                       </template>
                       <v-card>
                         <v-card-title>
@@ -79,10 +74,9 @@
                     </v-dialog>
                   </v-toolbar>
                 </template>
-
                 <template v-slot:[`item.actions`]="{ item }">
-                  <v-icon small class="mr-2" @click="editItem(item)" v-if="isEdit">mdi-pencil</v-icon>
-                  <v-icon small @click="deleteItem(item)" v-if="isDelete">mdi-delete</v-icon>
+                  <v-icon small class="mr-2" @click="editItem(item)" v-if="isEdit" >mdi-pencil</v-icon>
+                  <v-icon small @click="deleteItem(item)" v-if="isDelete" >mdi-delete</v-icon>
                 </template>
               </v-data-table>
             </v-card>
@@ -99,35 +93,6 @@
 </template>
 
 <script>
-// export default {
-//   data() {
-//     return {
-//       search: "",
-//       headers: [
-//         { text: "Id", value: "id" },
-//         {
-//           text: "Name",
-//           align: "start",
-//           sortable: false,
-//           value: "name",
-//         },
-//         { text: "Price", value: "price" },
-//         { text: "Created At", value: "created_at" },
-//         { text: "Actions", value: "actions", sortable: false },
-//       ],
-//     };
-//   },
-//   computed: {
-//     productList: {
-//       get() {
-//         return this.$store.state.product.productList;
-//       },
-//     },
-//   },
-//   created() {
-//     this.$store.dispatch("product/getProducts");
-//   },
-// };
 export default {
   data() {
     return {
@@ -158,18 +123,30 @@ export default {
         price: 0,
       },
       error: [],
-      isAdd: false,
-      isEdit: false,
-      isDelete: false,
     };
   },
 
   computed: {
-    userPermissions: {
-      get() {
-        this.permissions = this.$store.state.currentUser.permissions;
-        return this.$store.state.currentUser.permissions;
+    isAdd() {
+      let userPermissions = this.$store.state.currentUser.permissions;
+      for ( var i = 0; i< userPermissions.length; i++) {
+          if( userPermissions[i].name === "Thêm sản phẩm") return true
       }
+      return false
+    },
+    isEdit() {
+      let userPermissions = this.$store.state.currentUser.permissions;
+      for ( var i = 0; i< userPermissions.length; i++) {
+          if( userPermissions[i].name === "Sửa sản phẩm") return true
+      }
+      return false
+    },
+    isDelete() {
+      let userPermissions = this.$store.state.currentUser.permissions;
+      for ( var i = 0; i< userPermissions.length; i++) {
+          if( userPermissions[i].name === "Xoá sản phẩm") return true
+      }
+      return false
     },
     formTitle () {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
@@ -185,30 +162,9 @@ export default {
       val || this.close()
     },
   },
-  // mounted() {
-  //   for ( let i = 0; i < this.userPermissions.length; i++) {
-  //     if ( this.userPermissions[i].name === "Thêm sản phẩm") {
-  //       this.isAdd = true;
-  //     }
-  //     if ( this.userPermissions[i].name === "Sửa sản phẩm") {
-  //       this.isEdit = true;
-  //     }
-  //     if ( this.userPermissions[i].name === "Xoá sản phẩm") {
-  //       this.isDelete = true;
-  //     }
-  //   }
-  // },
-  beforeMount() {
-    this.permissions = this.userPermissions
-    console.log(this.permissions)
-  },
   created () {
     this.$store.dispatch("product/getProducts");
-    // this.$store.dispatch('currentUser/getUser');
   },
-  // beforeCreate() {
-  //   this.userPermissions;
-  // },
   methods: {
     editItem (item) {
       this.editedIndex = this.productList.indexOf(item)

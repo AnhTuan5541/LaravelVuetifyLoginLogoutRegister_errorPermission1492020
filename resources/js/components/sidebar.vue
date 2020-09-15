@@ -36,7 +36,7 @@
                 </p>
                 </router-link>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="isViewProduct">
                 <router-link to="/product" class="nav-link" active-class="active">
                 <i class="nav-icon far fa-image"></i>
                 <p>
@@ -158,38 +158,25 @@
 
 <script>
 export default {
-    data() {
-        return {
-            isViewProduct: false
-        }
-    },
     computed: {
         currentUser: {
             get() {
                 return this.$store.state.currentUser.user;
             }
         },
-        userPermissions: {
-            get() {
-                return this.$store.state.currentUser.permissions;
+        isViewProduct() {
+            let userPermissions = this.$store.state.currentUser.permissions;
+            for ( var i = 0; i< userPermissions.length; i++) {
+                if( userPermissions[i].name === "Xem sản phẩm") return true
             }
-        }
+            return false
+        },
     },
     methods: {
         logout() {
             this.$store.dispatch('currentUser/logoutUser')
-        },
-    },
-    // beforeCreate() {
-    //     this.$store.dispatch('currentUser/getUser')
-    // },
-    beforeMount() {
-        for ( let i = 0; i < this.userPermissions.length; i++) {
-            if ( this.userPermissions[i].name === "Xem sản phẩm") {
-                this.isViewProduct = true;
-            }
         }
-    }
+    },
 }
 </script>
 
